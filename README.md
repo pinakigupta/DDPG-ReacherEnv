@@ -2,42 +2,60 @@
 
 <img src="https://camo.githubusercontent.com/7ad5cdff66f7229c4e9822882b3c8e57960dca4e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f766964656f2e756461636974792d646174612e636f6d2f746f706865722f323031382f4a756e652f35623165613737385f726561636865722f726561636865722e676966">
 
-# Introduction
-    Set-up: Double-jointed arm which can move to target locations.
-    Goal: The agents must move its hand to the goal location, and keep it there.
-    Agents: The environment contains 10 agent linked to a single Brain.
-    Agent Reward Function (independent):
-    +0.1 Each step agent's hand is in goal location.
-    Brains: One Brain with the following observation/action space.
-    Vector Observation space: 33 variables corresponding to position, rotation, velocity, and angular velocities of the two arm Rigidbodies.
-    Vector Action space: (Continuous) Size of 4, corresponding to torque applicable to two joints.
-    Visual Observations: None.
-    Reset Parameters: Five
-    goal_size: radius of the goal zone
-    Default: 5
-    Recommended Minimum: 1
-    Recommended Maximum: 10
-    goal_speed: speed of the goal zone around the arm (in radians)
-    Default: 1
-    Recommended Minimum: 0.2
-    Recommended Maximum: 4
-    gravity
-    Default: 9.81
-    Recommended Minimum: 4
-    Recommended Maximum: 20
-    deviation: Magnitude of sinusoidal (cosine) deviation of the goal along the vertical dimension
-    Default: 0
-    Recommended Minimum: 0
-    Recommended Maximum: 5
-    deviation_freq: Frequency of the cosine deviation of the goal along the vertical dimension
-    Default: 0
-    Recommended Minimum: 0
-    Recommended Maximum: 3
-    **Benchmark Mean Reward: 30**
+## Introduction
+In this environment, a double-jointed arm can move to target locations. A reward of +0.1 is provided for each step that the agent's hand is in the goal location. Thus, the goal of your agent is to maintain its position at the target location for as many time steps as possible.
+
+The observation space consists of 33 variables corresponding to position, rotation, velocity, and angular velocities of the arm. Each action is a vector with four numbers, corresponding to torque applicable to two joints. Every entry in the action vector should be a number between -1 and 1.
+
+### Distributed Training
+
+For this project, we will provide you with two separate versions of the Unity environment:
+- The first version contains a single agent.
+- The second version contains 20 identical agents, each with its own copy of the environment.  
+
+The second version is useful for algorithms like [PPO](https://arxiv.org/pdf/1707.06347.pdf), [A3C](https://arxiv.org/pdf/1602.01783.pdf), and [D4PG](https://openreview.net/pdf?id=SyZipzbCb) that use multiple (non-interacting, parallel) copies of the same agent to distribute the task of gathering experience.  
+
+### Solving the Environment
+
+Note that your project submission need only solve one of the two versions of the environment. 
+
+#### Option 1: Solve the First Version
+
+The task is episodic, and in order to solve the environment,  your agent must get an average score of +30 over 100 consecutive episodes.
+
+#### Option 2: Solve the Second Version
+
+The barrier for solving the second version of the environment is slightly different, to take into account the presence of many agents.  In particular, your agents must get an average score of +30 (over 100 consecutive episodes, and over all agents).  Specifically,
+- After each episode, we add up the rewards that each agent received (without discounting), to get a score for each agent.  This yields 20 (potentially different) scores.  We then take the average of these 20 scores. 
+- This yields an **average score** for each episode (where the average is over all 20 agents).
+
+The environment is considered solved, when the average (over 100 episodes) of those average scores is at least +30.    
+
+
+### Getting Started
+
+1. Download the environment from one of the links below.  You need only select the environment that matches your operating system:
+
+    - **_Version 1: One (1) Agent_**
+        - Linux: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Linux.zip)
+        - Mac OSX: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher.app.zip)
+        - Windows (32-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Windows_x86.zip)
+        - Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Windows_x86_64.zip)
+
+    - **_Version 2: Twenty (20) Agents_**
+        - Linux: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Linux.zip)
+        - Mac OSX: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher.app.zip)
+        - Windows (32-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Windows_x86.zip)
+        - Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Windows_x86_64.zip)
     
+    (_For Windows users_) Check out [this link](https://support.microsoft.com/en-us/help/827218/how-to-determine-whether-a-computer-is-running-a-32-bit-version-or-64) if you need help with determining if your computer is running a 32-bit version or 64-bit version of the Windows operating system.
 
+    (_For AWS_) If you'd like to train the agent on AWS (and have not [enabled a virtual screen](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md)), then please use [this link](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Linux_NoVis.zip) (version 1) or [this link](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Linux_NoVis.zip) (version 2) to obtain the "headless" version of the environment.  You will **not** be able to watch the agent without enabling a virtual screen, but you will be able to train the agent.  (_To watch the agent, you should follow the instructions to [enable a virtual screen](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md), and then download the environment for the **Linux** operating system above._)
 
-### Introduction:
+2. Place the file in the DRLND GitHub repository, in the `p2_continuous-control/` folder, and unzip (or decompress) the file. 
+
+### Instructions
+
 - To run the project just execute the <b>Continuous_Control.py</b> file.
 - There is also an Continuous_Control.ipynb file for jupyter notebook execution.
 - The <b>MultiEnvCheckPt/*checkpoint.pth</b> has the checkpointed actor and critic models
@@ -46,7 +64,7 @@
 
 
 
-## snapshot:
+### Overview:
 - The task solved here refers to a continuous control problem where the agent must be able to reach and go along with a moving ball controlling its arms.
 - It's a continuous problem because the action has a continuous value and the agent must be able to provide this value instead of just chose the one with the biggest value (like in discrete tasks where it should just say which action it wants to execute).
 - The reward of +0.1 is provided for each step that the agent's hand is in the goal location, in this case, the moving ball.
