@@ -26,7 +26,7 @@ print("DEVICE is ", DEVICE)
 class Agent():
     """Interacts with and learns from the environment."""
     
-    def __init__(self, state_size, action_size, random_seed):
+    def __init__(self, state_size, action_size, random_seed , num_envs = 1, checkpt_folder = "checkpt" ):
         """Initialize an Agent object.
         
         Params
@@ -36,8 +36,10 @@ class Agent():
             random_seed (int): random seed
         """
         self.state_size = state_size
+        self.num_envs = num_envs
         self.action_size = action_size
         self.seed = random.seed(random_seed)
+        self.CHECKPOINT_FOLDER = checkpt_folder
 
         # Actor Network (w/ Target Network)
         self.actor_local = model.Actor(state_size, action_size, random_seed).to(DEVICE)
@@ -57,7 +59,7 @@ class Agent():
             self.critic_target.load_state_dict(torch.load(self.CHECKPOINT_FOLDER + 'checkpoint_critic.pth'))'''
 
         # Noise process
-        self.noise = OUNoise(action_size, random_seed)
+        self.noise = OUNoise((num_envs, action_size), random_seed)
 
         # Replay memory
         self.memory = ReplayBuffer(DEVICE, action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
@@ -65,7 +67,8 @@ class Agent():
     def step(self, state, action, reward, next_state, done):
         """Save experience in replay memory, and use random sample from buffer to learn."""
         # Save experience / reward
-        self.memory.add(state, action, reward, next_state, done)
+        for i in range(self.num_envs):
+            self.memory.add(state[i,:], action[i,:], reward[i], next_state[i,:], done[i])
 
         # Learn, if enough samples are available in memory
         if len(self.memory) > BATCH_SIZE:
@@ -140,9 +143,11 @@ class Agent():
         for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
             target_param.data.copy_(tau*local_param.data + (1.0-tau)*target_param.data)
 
-    def checkpoint(self):
-        torch.save(self.actor_local.state_dict(), self.CHECKPOINT_FOLDER + 'checkpoint_actor.pth')      
-        torch.save(self.critic_local.state_dict(), self.CHECKPOINT_FOLDER + 'checkpoint_critic.pth')  
+    def checkpoint(self,string):
+        if not (os.path.isdir(self.CHECKPOINT_FOLDER)):
+               os.makedirs(self.CHECKPOINT_FOLDER)
+        torch.save(self.actor_local.state_dict(), self.CHECKPOINT_FOLDER + '/'+string+'_actor.pth')      
+        torch.save(self.critic_local.state_dict(), self.CHECKPOINT_FOLDER + '/'+string+'_critic.pth')  
 
 class OUNoise:
     """Ornstein-Uhlenbeck process."""
